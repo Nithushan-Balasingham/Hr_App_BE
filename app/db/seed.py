@@ -19,7 +19,17 @@ from app.models import (
     User,
     role_permissions,
 )
+# Add this patch right under your imports at the top of app/db/seed.py
+from sqlalchemy.dialects.mysql.aiomysql import AsyncAdapt_aiomysql_connection
 
+original_ping = AsyncAdapt_aiomysql_connection.ping
+
+
+def patched_ping(self, reconnect=True):  # Makes the argument optional
+    return original_ping(self, reconnect)
+
+
+AsyncAdapt_aiomysql_connection.ping = patched_ping
 # -------------------------
 # NAVIGATION STRUCTURE
 # -------------------------
@@ -100,7 +110,19 @@ ROLE_PERMISSIONS = {
 # -------------------------
 async def seed() -> None:
     try:
+        # Force SQLAlchemy to dynamically build tables if they don't exist yet
+        print("Checking/Creating system schema tables...")
+        from app.models import Base  # Or wherever your primary Declarative Base is initialized
+        
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+        print("Schema sync verification complete.")
+
+        # Execute data insertion pipelines
         await _run_seed()
+    except Exception as e:
+        print(f"An error occurred during seeding: {e}")
+        raise e
     finally:
         await engine.dispose()
 

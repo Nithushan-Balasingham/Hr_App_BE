@@ -15,7 +15,7 @@ if config.config_file_name is not None:
 
 target_metadata = Base.metadata
 settings = get_settings()
-config.set_main_option("sqlalchemy.url", settings.DATABASE_URL_SYNC)
+config.set_main_option("sqlalchemy.url", "mysql+pymysql://root:password123@localhost:3306/hr_portal?charset=utf8mb4")
 
 
 def run_migrations_offline() -> None:
