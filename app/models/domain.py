@@ -57,11 +57,19 @@ class LeaveRequest(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     employee_id: Mapped[str] = mapped_column(
         String(36), ForeignKey("employees.id", ondelete="CASCADE"), nullable=False, index=True
     )
-    leave_type: Mapped[LeaveType] = mapped_column(Enum(LeaveType), nullable=False)
+    leave_type: Mapped[LeaveType] = mapped_column(
+        Enum(LeaveType, native_enum=True, values_callable=lambda enum_cls: [e.value for e in enum_cls]),
+        nullable=False,
+    )
     start_date: Mapped[Date] = mapped_column(Date, nullable=False)
     end_date: Mapped[Date] = mapped_column(Date, nullable=False)
     reason: Mapped[str | None] = mapped_column(Text, nullable=True)
-    status: Mapped[LeaveStatus] = mapped_column(Enum(LeaveStatus), default=LeaveStatus.PENDING, nullable=False, index=True)
+    status: Mapped[LeaveStatus] = mapped_column(
+        Enum(LeaveStatus, native_enum=True, values_callable=lambda enum_cls: [e.value for e in enum_cls]),
+        default=LeaveStatus.PENDING,
+        nullable=False,
+        index=True,
+    )
     reviewed_by: Mapped[str | None] = mapped_column(
         String(36), ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True
     )
