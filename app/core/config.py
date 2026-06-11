@@ -7,8 +7,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8", extra="ignore")
 
-    DATABASE_URL: str = "mysql+aiomysql://user:password@localhost:3306/hr_portal?charset=utf8mb4"
-    DATABASE_URL_SYNC: str = "mysql+pymysql://user:password@localhost:3306/hr_portal?charset=utf8mb4"
+    DATABASE_URL: str = "mysql+aiomysql://root:password123@localhost:3306/hr_portal?charset=utf8mb4"
+    DATABASE_URL_SYNC: str = "mysql+pymysql://root:password123@localhost:3306/hr_portal?charset=utf8mb4"
     SECRET_KEY: str = "change-me"
     API_ENCRYPTION_KEY: str = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 15

@@ -9,6 +9,19 @@ from app.routers import audit_logs, auth, departments, employees, leave, modules
 settings = get_settings()
 
 app = FastAPI(title="HR Portal API", version="1.0.0")
+try:
+    from sqlalchemy.dialects.mysql.aiomysql import (
+        AsyncAdapt_aiomysql_connection,
+    )
+
+    _orig_ping = AsyncAdapt_aiomysql_connection.ping
+
+    def _patched_ping(self, reconnect=True):
+        return _orig_ping(self, reconnect)
+
+    AsyncAdapt_aiomysql_connection.ping = _patched_ping
+except ImportError:
+    pass
 
 
 app.add_middleware(AuditContextMiddleware)
