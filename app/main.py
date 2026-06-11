@@ -16,7 +16,7 @@ try:
 
     _orig_ping = AsyncAdapt_aiomysql_connection.ping
 
-    def _patched_ping(self, reconnect=True):
+    def _patched_ping(self, reconnect=False):
         return _orig_ping(self, reconnect)
 
     AsyncAdapt_aiomysql_connection.ping = _patched_ping
