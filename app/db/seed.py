@@ -71,13 +71,57 @@ NAV_TREE = [
             },
         ],
     },
+    {
+        "name": "Leave Management",
+        "slug": "leave-management",
+        "sort_order": 3,
+        "sub_modules": [
+            {
+                "name": "Leave Requests",
+                "slug": "leave-requests",
+                "sort_order": 1,
+                "pages": [
+                    {"name": "All Leave Requests", "slug": "all-leave-requests", "route_path": "/hr/leave/requests", "permission_names": ["view-leave-requests"], "sort_order": 1},
+                    {"name": "Approve Leave", "slug": "approve-leave", "route_path": "/hr/leave/approve", "permission_names": ["approve-leave"], "sort_order": 2},
+                ],
+            },
+        ],
+    },
+    {
+        "name": "Administration",
+        "slug": "administration",
+        "sort_order": 4,
+        "sub_modules": [
+            {
+                "name": "Roles & Permissions",
+                "slug": "roles-permissions",
+                "sort_order": 1,
+                "pages": [
+                    {"name": "All Roles", "slug": "all-roles", "route_path": "/hr/admin/roles", "permission_names": ["view-roles"], "sort_order": 1},
+                    {"name": "Create Role", "slug": "create-role", "route_path": "/hr/admin/roles/create", "permission_names": ["create-role"], "sort_order": 2},
+                ],
+            },
+            {
+                "name": "Audit Logs",
+                "slug": "audit-logs",
+                "sort_order": 2,
+                "pages": [
+                    {"name": "View Audit Logs", "slug": "view-audit-logs", "route_path": "/hr/admin/audit-logs", "permission_names": ["view-audit-logs"], "sort_order": 1},
+                ],
+            },
+        ],
+    },
 ]
 
 EXTRA_PERMISSIONS = [
+    # Employee extras (no dedicated nav page)
     ("delete-employee", "Delete Employee", "Permanently delete employee records"),
+    # Department extras
     ("delete-department", "Delete Department", "Permanently delete departments"),
     ("update-department", "Update Department", "Edit department records"),
+    # Role extras
     ("update-role", "Update Role", "Edit roles and assign permissions"),
+    # Leave extras
     ("create-leave-request", "Create Leave Request", "Submit leave requests"),
 ]
 
@@ -168,10 +212,13 @@ async def _run_seed() -> None:
                     if slug in permission_map:
                         continue
 
-                    if (
+                    sub_match = (
                         (sub.slug == "employees" and "employee" in slug)
                         or (sub.slug == "departments" and "department" in slug)
-                    ):
+                        or (sub.slug == "roles-permissions" and "role" in slug)
+                        or (sub.slug == "leave-requests" and "leave" in slug)
+                    )
+                    if sub_match:
                         perm = Permission(
                             sub_module_id=sub.id,
                             name=name,
